@@ -1,1 +1,0 @@
-65de19918356587996c3b5fbcfc55b4cd709256420e03c86f889974a247b67b7  ./target/wasm32-unknown-unknown/release/contracts_manager.wasm
