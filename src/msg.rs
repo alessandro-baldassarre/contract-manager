@@ -16,9 +16,9 @@ pub struct InstantiateMsg {
 
 #[cw_serde]
 pub enum ExecuteMsg {
-    /// Change admin (only current owner is authorized)
+    /// Change owner (only current owner is authorized)
     ChangeOwner { new_owner: String },
-    /// Instantiate a contract from the contracts-manager (only owner)
+    /// Instantiate a contract from the contracts-manager (only owner is authorized)
     InstantiateContract {
         /// Code-id of the contract you want instantiate
         code_id: u64,
