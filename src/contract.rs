@@ -1,22 +1,24 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{
-    to_binary, Addr, Binary, Deps, DepsMut, Env, MessageInfo, Reply, Response, StdError, StdResult,
-    SubMsg, WasmMsg,
+    to_binary, Addr, Binary, CosmosMsg, Deps, DepsMut, Env, MessageInfo, Reply, Response, StdError,
+    StdResult, SubMsg, WasmMsg,
 };
 use cw2::set_contract_version;
 use cw_controllers::Admin;
 use cw_utils::parse_reply_instantiate_data;
 
 use crate::error::ContractError;
-use crate::helpers::value_from_attr_key;
+use crate::helpers::{value_from_attr_key, MessageExt};
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::state::{CONTRACTS_LIST, IS_METADATA_SET, LABEL_CACHE};
+use crate::state::{CONTRACTS_LIST, LABEL_CACHE};
+use crate::types::archwayrewardsv1beta1::{ContractMetadata, MsgSetContractMetadata};
 
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:contracts-manager";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 const INSTANTIATE_REPLY_ID: u64 = 1u64;
+const SET_CONTRACT_METADATA_REPLY_ID: u64 = 2u64;
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(
@@ -54,6 +56,10 @@ pub fn execute(
             instantiate_msg,
             label,
         } => instantiate_contract(deps, env, info, code_id, instantiate_msg, label),
+        ExecuteMsg::ChangeOwner { new_owner } => change_owner(deps, info, new_owner),
+        ExecuteMsg::SetContractMetadata(contract_metadata) => {
+            set_contract_metadata(deps, env, info, contract_metadata)
+        }
         _ => unimplemented!(),
     }
 }
@@ -66,7 +72,7 @@ fn instantiate_contract(
     instantiate_msg: Binary,
     label: String,
 ) -> Result<Response, ContractError> {
-    // Control that the sender is the owner of the contracts-manager
+    // Verify sender is the owner of the contracts-manager
     let owner = Admin::new("owner");
     owner.assert_admin(deps.as_ref(), &info.sender)?;
 
@@ -88,6 +94,48 @@ fn instantiate_contract(
         .add_attribute("internal_instantiation", "contracts_manager")
         .add_attribute("instantiated_code_id", code_id.to_string())
         .add_attribute("instantiated_label", label))
+}
+
+fn change_owner(
+    deps: DepsMut,
+    info: MessageInfo,
+    new_owner: String,
+) -> Result<Response, ContractError> {
+    // Verify sender is the owner of the contracts-manager
+    let owner = Admin::new("owner");
+    owner.assert_admin(deps.as_ref(), &info.sender)?;
+
+    // Change owner with the new address
+    let new_owner_addr = deps.api.addr_validate(&new_owner)?;
+    let res = owner.execute_update_admin(deps, info, Some(new_owner_addr))?;
+    Ok(res)
+}
+
+fn set_contract_metadata(
+    deps: DepsMut,
+    env: Env,
+    info: MessageInfo,
+    contract_metadata: ContractMetadata,
+) -> Result<Response, ContractError> {
+    // Verify sender is the owner of the contracts-manager
+    let owner = Admin::new("owner");
+    owner.assert_admin(deps.as_ref(), &info.sender)?;
+
+    let msg = MsgSetContractMetadata {
+        sender_address: env.contract.address.to_string(),
+        metadata: Some(contract_metadata),
+    };
+
+    let cosmo_msg = CosmosMsg::Stargate {
+        type_url: "/archway.rewards.v1beta1.MsgSetContractMetadata".to_owned(),
+        value: Binary(msg.to_bytes()?),
+    };
+
+    let sub_msg = SubMsg::reply_on_success(cosmo_msg, SET_CONTRACT_METADATA_REPLY_ID);
+
+    Ok(Response::new()
+        .add_submessage(sub_msg)
+        .add_attribute("action", "set_contract_metadata"))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -127,7 +175,6 @@ fn handle_instantiate_reply(deps: DepsMut, msg: Reply) -> Result<Response, Contr
 
     // Save the contract address to the store (initially the metadata is set to false)
     CONTRACTS_LIST.save(deps.storage, (&code_id, &label), &contract_addr)?;
-    IS_METADATA_SET.save(deps.storage, &contract_addr, &false)?;
 
     // Clear the cache
     LABEL_CACHE.remove(deps.storage);
