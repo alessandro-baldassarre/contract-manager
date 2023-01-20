@@ -24,7 +24,7 @@ pub fn execute(
         metadata: Some(contract_metadata),
     };
 
-    let cosmo_msg = CosmosMsg::Stargate {
+    let cosmo_msg: CosmosMsg = CosmosMsg::Stargate {
         type_url: "/archway.rewards.v1beta1.MsgSetContractMetadata".to_owned(),
         value: Binary(msg.to_bytes()?),
     };

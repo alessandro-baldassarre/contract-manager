@@ -10,7 +10,7 @@ use crate::error::ContractError;
 use crate::execute::instantiate_contract::INSTANTIATE_REPLY_ID;
 use crate::execute::{change_owner, instantiate_contract, set_contract_metadata};
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::query_contract_address;
+use crate::query::{query_contract_address, query_rewards_record};
 use crate::reply::instantiate;
 
 // version info for migration info
@@ -66,6 +66,9 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::QueryInstantiatedContract { code_id, label } => {
             to_binary(&query_contract_address::query(deps, code_id, label)?)
+        }
+        QueryMsg::QueryRewardsRecords(records_request) => {
+            to_binary(&query_rewards_record::query(deps, records_request)?)
         }
         _ => unimplemented!(),
     }
