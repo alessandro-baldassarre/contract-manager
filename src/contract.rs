@@ -121,7 +121,7 @@ fn handle_instantiate_reply(deps: DepsMut, msg: Reply) -> Result<Response, Contr
     let contract_addr = deps.api.addr_validate(&res.contract_address)?;
 
     // Retrieve code_id from event attribute
-    let code_id = value_from_attr_key(msg.clone(), "code_id")?;
+    let code_id = value_from_attr_key(msg, "code_id")?;
 
     let label = LABEL_CACHE.load(deps.storage)?;
 

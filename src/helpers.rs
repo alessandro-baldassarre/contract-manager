@@ -17,7 +17,7 @@ where
 
 /// Returns the value from attribute specified
 pub fn value_from_attr_key(msg: Reply, key: &str) -> StdResult<String> {
-    let value = event_from_attr(msg.clone(), key)?
+    let value = event_from_attr(msg, key)?
         .attributes
         .iter()
         .find(|&attr| attr.key == key)
