@@ -1,6 +1,7 @@
 use cosmwasm_std::StdError;
 use cw_controllers::AdminError;
 use cw_utils::ParseReplyError;
+use prost::EncodeError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -11,6 +12,8 @@ pub enum ContractError {
     Reply(#[from] ParseReplyError),
     #[error("{0}")]
     Admin(#[from] AdminError),
+    #[error("{0}")]
+    Prost(#[from] EncodeError),
     #[error("Unauthorized")]
     Unauthorized {},
     // Add any other custom errors you like here.
