@@ -1,4 +1,4 @@
-use cosmwasm_std::{Binary, CosmosMsg, DepsMut, Env, MessageInfo, Response, SubMsg};
+use cosmwasm_std::{Binary, CosmosMsg, DepsMut, Env, MessageInfo, Response};
 use cw_controllers::Admin;
 
 use crate::{
@@ -6,8 +6,6 @@ use crate::{
     types::archwayrewardsv1beta1::{ContractMetadata, MsgSetContractMetadata},
     ContractError,
 };
-
-pub const SET_CONTRACT_METADATA_REPLY_ID: u64 = 2u64;
 
 pub fn execute(
     deps: DepsMut,
@@ -29,9 +27,7 @@ pub fn execute(
         value: Binary(msg.to_bytes()?),
     };
 
-    let sub_msg = SubMsg::reply_on_success(cosmo_msg, SET_CONTRACT_METADATA_REPLY_ID);
-
     Ok(Response::new()
-        .add_submessage(sub_msg)
+        .add_message(cosmo_msg)
         .add_attribute("action", "set_contract_metadata"))
 }
