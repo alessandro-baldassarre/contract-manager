@@ -21,7 +21,7 @@ pub fn execute(
     let rewards_address = rewards_address
         .map(|addr| deps.api.addr_validate(&addr))
         .transpose()?
-        .unwrap_or(contracts_manager_addr.clone());
+        .unwrap_or_else(|| contracts_manager_addr.clone());
 
     let msg: CosmosMsg = MsgSetContractMetadata::new(
         &contracts_manager_addr,
