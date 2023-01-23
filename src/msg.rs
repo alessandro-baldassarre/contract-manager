@@ -1,3 +1,7 @@
+use archway_sdk::types::{
+    archwayrewardsv1beta1::{QueryContractMetadataResponse, QueryRewardsRecordsResponse},
+    cosmosbasequeryv1beta1::PageRequest,
+};
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Binary;
 
@@ -33,6 +37,13 @@ pub enum ExecuteMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {
-    #[returns(bool)]
-    IsOwner {},
+    /// Request contract metadata of the contract address provided
+    #[returns(QueryContractMetadataResponse)]
+    ContractMetadata { contract_address: String },
+    /// Request rewards record of the contract address provided with an optional pagination
+    #[returns(QueryRewardsRecordsResponse)]
+    RewardsRecord {
+        contract_address: String,
+        pagination: Option<PageRequest>,
+    },
 }
