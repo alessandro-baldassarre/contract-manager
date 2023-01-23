@@ -23,6 +23,7 @@ pub fn execute(
         .transpose()?
         .unwrap_or_else(|| contracts_manager_addr.clone());
 
+    // Create stargate msg to dispatch
     let msg: CosmosMsg = MsgSetContractMetadata::new(
         &contracts_manager_addr,
         &contract_address,
