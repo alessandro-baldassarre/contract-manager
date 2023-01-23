@@ -1,8 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{
-    to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Reply, Response, StdError, StdResult,
-};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Reply, Response, StdError, StdResult};
 use cw2::set_contract_version;
 use cw_controllers::Admin;
 
@@ -10,7 +8,6 @@ use crate::error::ContractError;
 use crate::execute::instantiate_contract::INSTANTIATE_REPLY_ID;
 use crate::execute::{change_owner, instantiate_contract, set_contract_metadata};
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{query_contract_address, query_rewards_record};
 use crate::reply::instantiate;
 
 // version info for migration info
@@ -54,24 +51,16 @@ pub fn execute(
             label,
         } => instantiate_contract::execute(deps, env, info, code_id, instantiate_msg, label),
         ExecuteMsg::ChangeOwner { new_owner } => change_owner::execute(deps, info, new_owner),
-        ExecuteMsg::SetContractMetadata(contract_metadata) => {
-            set_contract_metadata::execute(deps, env, info, contract_metadata)
-        }
-        _ => unimplemented!(),
+        ExecuteMsg::SetContractMetadata {
+            contract_address,
+            rewards_address,
+        } => set_contract_metadata::execute(deps, env, info, contract_address, rewards_address),
     }
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
-    match msg {
-        QueryMsg::QueryInstantiatedContract { code_id, label } => {
-            to_binary(&query_contract_address::query(deps, code_id, label)?)
-        }
-        QueryMsg::QueryRewardsRecords(records_request) => {
-            to_binary(&query_rewards_record::query(deps, records_request)?)
-        }
-        _ => unimplemented!(),
-    }
+pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
+    unimplemented!()
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]

@@ -1,11 +1,5 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Addr, Binary};
-
-use crate::types::archwayrewardsv1beta1::{
-    ContractMetadata, MsgWithdrawRewards, QueryContractMetadataRequest,
-    QueryContractMetadataResponse, QueryOutstandingRewardsRequest, QueryOutstandingRewardsResponse,
-    QueryRewardsRecordsRequest, QueryRewardsRecordsResponse,
-};
+use cosmwasm_std::Binary;
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -27,27 +21,18 @@ pub enum ExecuteMsg {
         /// Label for the contract to instantiate
         label: String,
     },
-    /// Set or update your contract metadata (only owner is authorized)
-    SetContractMetadata(ContractMetadata),
-    /// Performs collected rewards distribution (only owner is authorized)
-    WithdrawRewards(MsgWithdrawRewards),
+    /// Set your contract metadata (only the owner of the contracts-manager is authorized)
+    SetContractMetadata {
+        /// Defines the contract address to set metadata
+        contract_address: String,
+        /// Address to distribute rewards to, if no specified contracts-manager address by default
+        rewards_address: Option<String>,
+    },
 }
 
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {
-    /// Returns the contract rewards parameters
-    #[returns(QueryContractMetadataResponse)]
-    QueryContractMetadata(QueryContractMetadataRequest),
-    /// Returns the paginated list of RewardsRecord object stored for the provided
-    /// rewards_address.
-    #[returns(QueryRewardsRecordsResponse)]
-    QueryRewardsRecords(QueryRewardsRecordsRequest),
-    /// Returns total rewards credited from different contracts for the provided rewards_address.
-    #[returns(QueryOutstandingRewardsResponse)]
-    QueryOutstandingRewards(QueryOutstandingRewardsRequest),
-    /// Returns the address of the contract instantiate from the manager for the provided
-    /// code_id and label
-    #[returns(Addr)]
-    QueryInstantiatedContract { code_id: String, label: String },
+    #[returns(bool)]
+    IsOwner {},
 }
