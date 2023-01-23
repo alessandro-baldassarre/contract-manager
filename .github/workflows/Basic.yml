@@ -25,7 +25,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: unit-test
-          args: --locked
         env:
           RUST_BACKTRACE: 1
 
@@ -33,7 +32,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: wasm
-          args: --locked
         env:
           RUSTFLAGS: "-C link-arg=-s"
 
@@ -68,7 +66,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: schema
-          args: --locked
 
       - name: Schema Changes
         # fails if any changes not committed

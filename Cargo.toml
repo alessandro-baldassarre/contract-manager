@@ -50,7 +50,7 @@ cw-controllers = "1.0.1"
 schemars = "0.8.11"
 serde = { version = "1.0.152", default-features = false, features = ["derive"] }
 thiserror = { version = "1.0.38" }
-archway-sdk = { path = "./../../archway-sdk/packages/archway-sdk"}
+archway-sdk = { git = "https://github.com/alessandro-baldassarre/archway-sdk" }
 
 [dev-dependencies]
 cw-multi-test = "0.16.2"
