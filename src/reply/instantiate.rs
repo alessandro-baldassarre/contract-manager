@@ -3,7 +3,7 @@ use cw_utils::parse_reply_instantiate_data;
 
 use crate::{
     helpers::value_from_attr_key,
-    state::{CONTRACTS_LIST, LABEL_CACHE},
+    state::{Contract, CONTRACTS_LIST, LABEL_CACHE},
     ContractError,
 };
 
@@ -17,8 +17,13 @@ pub fn reply(deps: DepsMut, msg: Reply) -> Result<Response, ContractError> {
 
     let label = LABEL_CACHE.load(deps.storage)?;
 
+    let contract = Contract {
+        contract_address: contract_addr,
+        label,
+    };
+
     // Save the contract address to the store (initially the metadata is set to false)
-    CONTRACTS_LIST.save(deps.storage, (&code_id, &label), &contract_addr)?;
+    CONTRACTS_LIST.save(deps.storage, &code_id, &contract)?;
 
     // Clear the cache
     LABEL_CACHE.remove(deps.storage);
