@@ -11,7 +11,7 @@ use crate::error::ContractError;
 use crate::execute::instantiate_contract::INSTANTIATE_REPLY_ID;
 use crate::execute::{change_owner, instantiate_contract, set_contract_metadata};
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
-use crate::query::{contract_metadata, rewards_record};
+use crate::query::{contract_metadata, contracts_list, rewards_record};
 use crate::reply::instantiate;
 
 // version info for migration info
@@ -73,6 +73,7 @@ pub fn query(deps: Deps<ArchwayQuery>, env: Env, msg: QueryMsg) -> StdResult<Bin
         QueryMsg::RewardsRecord { pagination } => {
             to_binary(&rewards_record::query(deps, env, pagination)?)
         }
+        QueryMsg::ContractsList {} => to_binary(&contracts_list::query(deps)?),
     }
 }
 

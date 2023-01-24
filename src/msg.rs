@@ -2,6 +2,8 @@ use archway_sdk::custom::types::{ContractMetadataResponse, PageRequest, RewardsR
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Binary;
 
+use crate::state::Contract;
+
 #[cw_serde]
 pub struct InstantiateMsg {
     /// Owner that can execute messages (not for migration), optional (if not set takes the sender
@@ -53,10 +55,14 @@ pub enum ExecuteMsg {
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {
-    /// Request contract metadata of the provided contract address
+    /// Returns the list of the contracts managed by this contracts-manager (code_id => contract
+    /// info)
+    #[returns(Vec<(String,Contract)>)]
+    ContractsList {},
+    /// Returns contract metadata of the provided contract address
     #[returns(ContractMetadataResponse)]
     ContractMetadata { contract_address: String },
-    /// Request rewards record with an optional pagination
+    /// Returns rewards record with an optional pagination of the contracts-manager
     #[returns(RewardsRecordsResponse)]
     RewardsRecord { pagination: Option<PageRequest> },
 }
