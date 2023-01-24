@@ -59,19 +59,20 @@ pub fn execute(
             contract_address,
             rewards_address,
         } => set_contract_metadata::execute(deps, env, info, contract_address, rewards_address),
+
+        _ => unimplemented!(),
     }
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(deps: Deps<ArchwayQuery>, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+pub fn query(deps: Deps<ArchwayQuery>, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::ContractMetadata { contract_address } => {
             to_binary(&contract_metadata::query(deps, contract_address)?)
         }
-        QueryMsg::RewardsRecord {
-            rewards_address,
-            pagination,
-        } => to_binary(&rewards_record::query(deps, rewards_address, pagination)?),
+        QueryMsg::RewardsRecord { pagination } => {
+            to_binary(&rewards_record::query(deps, env, pagination)?)
+        }
     }
 }
 

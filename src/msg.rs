@@ -29,18 +29,34 @@ pub enum ExecuteMsg {
         /// Address to distribute rewards to, if no specified contracts-manager address by default
         rewards_address: Option<String>,
     },
+    /// Update your contract metadata (only the owner of the contracts-manager is authorized)
+    UpdateContractMetadata {
+        /// Defines the contract address to set metadata
+        contract_address: String,
+        /// Address to distribute rewards to, if no specified contracts-manager address by default
+        rewards_address: Option<String>,
+    },
+    /// Performs collected rewards distribution with a maximum number of rewards
+    /// record object to process.(only owner if the contracts-manager)
+    WithdrawRewardsRecordsLimit {
+        rewards_address: String,
+        records_limit: u64,
+    },
+    /// Performs collected rewards distribution with specific rewards record object IDs to
+    /// process.(only owner if the contracts-manager)
+    WithdrawRewardsRecordsIds {
+        rewards_address: String,
+        record_ids: Vec<u64>,
+    },
 }
 
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {
-    /// Request contract metadata of the contract address provided
+    /// Request contract metadata of the provided contract address
     #[returns(ContractMetadataResponse)]
     ContractMetadata { contract_address: String },
-    /// Request rewards record of the contract address provided with an optional pagination
+    /// Request rewards record with an optional pagination
     #[returns(RewardsRecordsResponse)]
-    RewardsRecord {
-        rewards_address: String,
-        pagination: Option<PageRequest>,
-    },
+    RewardsRecord { pagination: Option<PageRequest> },
 }
