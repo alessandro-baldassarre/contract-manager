@@ -26,9 +26,9 @@ pub fn execute(
     // Create stargate msg to dispatch
     let msg: CosmosMsg = MsgSetContractMetadata::new(
         &contracts_manager_addr,
-        &contract_address,
+        contract_address,
         &contracts_manager_addr,
-        &rewards_address,
+        rewards_address,
     )
     .into();
 

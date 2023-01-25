@@ -8,16 +8,8 @@ pub fn query(deps: Deps<ArchwayQuery>) -> StdResult<Vec<(String, Contract<String
         .range(deps.storage, None, None, Order::Descending)
         .collect();
     let contracts_list = contracts_res?;
-    let contracts_addr: Vec<Contract<String>> = contracts_list
-        .clone()
-        .into_iter()
-        .map(|res| res.1.into())
-        .collect();
-    let contracts_label: Vec<String> = contracts_list
-        .clone()
-        .into_iter()
-        .map(|res| res.0)
-        .collect();
+    let contracts_addr = contracts_list.clone().into_iter().map(|res| res.1.into());
+    let contracts_label = contracts_list.into_iter().map(|res| res.0);
     let contracts = contracts_label
         .into_iter()
         .zip(contracts_addr.into_iter())
