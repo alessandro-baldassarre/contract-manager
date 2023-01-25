@@ -1,12 +1,12 @@
+use archway_sdk::custom::query::ArchwayQuery;
 use cosmwasm_std::{Binary, DepsMut, Env, MessageInfo, Response, SubMsg, WasmMsg};
-use cw_controllers::Admin;
 
-use crate::{state::LABEL_CACHE, ContractError};
+use crate::{contract::ADMIN, state::LABEL_CACHE, ContractError};
 
 pub const INSTANTIATE_REPLY_ID: u64 = 1u64;
 
 pub fn execute(
-    deps: DepsMut,
+    deps: DepsMut<ArchwayQuery>,
     env: Env,
     info: MessageInfo,
     code_id: u64,
@@ -14,8 +14,7 @@ pub fn execute(
     label: String,
 ) -> Result<Response, ContractError> {
     // Verify sender is the owner of the contracts-manager
-    let owner = Admin::new("owner");
-    owner.assert_admin(deps.as_ref(), &info.sender)?;
+    ADMIN.assert_admin(deps.as_ref(), &info.sender)?;
 
     // Temporary saving the label of the contract to be instantiated to be used in the reply
     LABEL_CACHE.save(deps.storage, &label)?;

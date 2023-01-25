@@ -5,6 +5,7 @@ pub fn query(
     deps: Deps<ArchwayQuery>,
     contract_address: String,
 ) -> StdResult<ContractMetadataResponse> {
-    let request = ArchwayQuery::contract_metadata(contract_address).into();
+    let contract_addr = deps.api.addr_validate(&contract_address)?;
+    let request = ArchwayQuery::contract_metadata(contract_addr.to_string()).into();
     deps.querier.query(&request)
 }

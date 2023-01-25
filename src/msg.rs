@@ -57,7 +57,7 @@ pub enum ExecuteMsg {
 pub enum QueryMsg {
     /// Returns the list of the contracts managed by this contracts-manager (code_id => contract
     /// info)
-    #[returns(Vec<(String,Contract)>)]
+    #[returns(Vec<(String,Contract<String>)>)]
     ContractsList {},
     /// Returns contract metadata of the provided contract address
     #[returns(ContractMetadataResponse)]

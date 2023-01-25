@@ -1,18 +1,18 @@
-use archway_sdk::types::archwayrewardsv1beta1::MsgSetContractMetadata;
+use archway_sdk::{
+    custom::query::ArchwayQuery, types::archwayrewardsv1beta1::MsgSetContractMetadata,
+};
 use cosmwasm_std::{CosmosMsg, DepsMut, Env, MessageInfo, Response};
-use cw_controllers::Admin;
 
-use crate::ContractError;
+use crate::{contract::ADMIN, ContractError};
 pub fn execute(
-    deps: DepsMut,
+    deps: DepsMut<ArchwayQuery>,
     env: Env,
     info: MessageInfo,
     contract_address: String,
     rewards_address: Option<String>,
 ) -> Result<Response, ContractError> {
     // Verify sender is the owner of the contracts-manager
-    let owner = Admin::new("owner");
-    owner.assert_admin(deps.as_ref(), &info.sender)?;
+    ADMIN.assert_admin(deps.as_ref(), &info.sender)?;
 
     let contracts_manager_addr = env.contract.address;
 

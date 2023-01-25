@@ -1,4 +1,6 @@
-use cosmwasm_std::{Event, Reply, StdError, StdResult};
+use cosmwasm_std::{Addr, Event, Reply, StdError, StdResult};
+
+use crate::state::Contract;
 
 /// Returns the value from attribute specified
 pub fn value_from_attr_key(msg: Reply, key: &str) -> StdResult<String> {
@@ -32,4 +34,13 @@ fn event_from_attr(msg: Reply, key: &str) -> StdResult<Event> {
 
 fn event_contains_attr(event: &Event, key: &str) -> bool {
     event.attributes.iter().any(|attr| attr.key == key)
+}
+
+impl From<Contract<Addr>> for Contract<String> {
+    fn from(value: Contract<Addr>) -> Self {
+        Contract {
+            contract_address: value.contract_address.into(),
+            label: value.label,
+        }
+    }
 }
