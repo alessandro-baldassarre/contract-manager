@@ -40,9 +40,9 @@ optimize-arm64 = """docker run --rm -v "$(pwd)":/code \
 """
 
 [dependencies]
-cosmwasm-schema = "1.1.9"
-cosmwasm-std = {version = "1.1.9", features = ["stargate"]}
-cosmwasm-storage = "1.1.9"
+cosmwasm-schema = "1.2.0"
+cosmwasm-std = "1.2.0"
+cosmwasm-storage = "1.2.0"
 cw-storage-plus = "1.0.1"
 cw2 = "1.0.1"
 cw-utils = "1.0.1"
@@ -55,3 +55,4 @@ cw-address-like = "1.0.3"
 
 [dev-dependencies]
 cw-multi-test = "0.16.2"
+archway-test = { git = "https://github.com/alessandro-baldassarre/archway-test"}
